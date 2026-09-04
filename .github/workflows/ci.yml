@@ -1,0 +1,99 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: ubuntu
+            os: ubuntu-latest
+            generator: Ninja
+          - name: macos
+            os: macos-latest
+            generator: Ninja
+          - name: windows
+            os: windows-latest
+            generator: ""
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Build, test and install
+        env:
+          GENERATOR: ${{ matrix.generator }}
+        run: |
+          if [ -n "$GENERATOR" ]; then
+            configure=(-G "$GENERATOR" -DCMAKE_BUILD_TYPE=Release)
+          else
+            configure=()
+          fi
+
+          for linkage in ON OFF; do
+            echo "== BUILD_SHARED_LIBS=$linkage"
+            rm -rf build stage
+            cmake -S . -B build "${configure[@]}" \
+              -DBUILD_SHARED_LIBS=$linkage \
+              -DCMAKE_COMPILE_WARNING_AS_ERROR=ON \
+              -DCMAKE_INSTALL_PREFIX="$PWD/stage"
+            cmake --build build --config Release
+            ctest --test-dir build -C Release --output-on-failure --no-tests=error
+            cmake --install build --config Release
+            cmake -S test_package -B build/consumer "${configure[@]}" \
+              -DCMAKE_PREFIX_PATH="$PWD/stage"
+            cmake --build build/consumer --config Release
+            consumer=$(find build/consumer \
+              \( -name test_package -o -name test_package.exe \) -type f | head -1)
+            PATH="$PWD/stage/bin:$PATH" "$consumer"
+          done
+
+  conan:
+    name: Conan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install Conan
+        run: |
+          pipx install conan
+          bin_dir=$(pipx environment --value PIPX_BIN_DIR)
+          echo "$bin_dir" >> "$GITHUB_PATH"
+          "$bin_dir/conan" profile detect --force
+      - name: Create the package
+        run: |
+          for shared in True False; do
+            echo "== shared=$shared"
+            conan create . -o "olfarve/*:shared=$shared"
+          done
+
+  tidy:
+    name: Static analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install clang-tidy
+        run: |
+          pipx install "clang-tidy==21.1.6"
+          pipx environment --value PIPX_BIN_DIR >> "$GITHUB_PATH"
+      - name: Configure
+        run: >
+          cmake -S . -B build -G Ninja
+          -DCMAKE_BUILD_TYPE=Debug
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+      - name: Check
+        run: |
+          clang-tidy -p build --warnings-as-errors='*' \
+            src/color.cpp tests/*.cpp

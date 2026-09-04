@@ -1,0 +1,36 @@
+// SPDX-FileCopyrightText: 2026 Thomas Ascher <thomas.ascher@gmx.at>
+//
+// SPDX-License-Identifier: MIT
+
+/// \file
+/// \brief Version of the olfarve library.
+///
+/// Generated from `include/olfarve/version.hpp.in`; do not edit the copy in
+/// the build directory.
+
+#ifndef OLFARVE_VERSION_HPP
+#define OLFARVE_VERSION_HPP
+
+#include <olfarve/olfarve_export.hpp>
+
+/// Major version of the headers being compiled against.
+#define OLFARVE_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
+/// Minor version of the headers being compiled against.
+#define OLFARVE_VERSION_MINOR @PROJECT_VERSION_MINOR@
+/// Patch version of the headers being compiled against.
+#define OLFARVE_VERSION_PATCH @PROJECT_VERSION_PATCH@
+/// Version of the headers being compiled against, as a `"major.minor.patch"` string.
+#define OLFARVE_VERSION_STRING "@PROJECT_VERSION@"
+
+namespace olfarve {
+
+/// Return the version of the library being linked against, as a
+/// `"major.minor.patch"` string.
+///
+/// Compare it against \ref OLFARVE_VERSION_STRING to detect a shared library
+/// that does not match the headers it was built against.
+[[nodiscard]] OLFARVE_EXPORT const char* version() noexcept;
+
+}  // namespace olfarve
+
+#endif  // OLFARVE_VERSION_HPP

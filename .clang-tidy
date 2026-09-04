@@ -1,0 +1,57 @@
+# SPDX-FileCopyrightText: 2026 Thomas Ascher <thomas.ascher@gmx.at>
+#
+# SPDX-License-Identifier: MIT
+#
+# C++ Core Guidelines enforcement, minus the checks that only have a GSL answer
+# and the macro checks: OLFARVE_VERSION_* has to stay usable from #if, which is
+# the one job an enum or a constexpr constant cannot do.
+# readability-identifier-naming encodes the Boost naming rules, so the
+# convention is machine checked rather than prose in the README.
+
+Checks: >
+  bugprone-*,
+  cppcoreguidelines-*,
+  misc-*,
+  modernize-*,
+  performance-*,
+  portability-*,
+  readability-*,
+  -cppcoreguidelines-owning-memory,
+  -cppcoreguidelines-macro-to-enum,
+  -cppcoreguidelines-macro-usage,
+  -modernize-macro-to-enum,
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+  -cppcoreguidelines-pro-bounds-constant-array-index,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -modernize-use-trailing-return-type,
+  -readability-identifier-length
+
+WarningsAsErrors: ''
+HeaderFilterRegex: '.*/(include/olfarve|src|tests|examples|test_package)/.*\.(hpp|cpp)$'
+FormatStyle: file
+
+CheckOptions:
+  # srgb_color and rgb8 are plain aggregates with no invariant to protect,
+  # which is what the guidelines ask a struct to be (C.2, C.8).
+  misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic: true
+
+  # Boost naming: everything lowercase with underscores, macros excepted.
+  readability-identifier-naming.NamespaceCase: lower_case
+  readability-identifier-naming.ClassCase: lower_case
+  readability-identifier-naming.StructCase: lower_case
+  readability-identifier-naming.UnionCase: lower_case
+  readability-identifier-naming.EnumCase: lower_case
+  readability-identifier-naming.EnumConstantCase: lower_case
+  readability-identifier-naming.FunctionCase: lower_case
+  readability-identifier-naming.MethodCase: lower_case
+  readability-identifier-naming.MemberCase: lower_case
+  readability-identifier-naming.VariableCase: lower_case
+  readability-identifier-naming.ParameterCase: lower_case
+  readability-identifier-naming.ConstantCase: lower_case
+  readability-identifier-naming.ConstexprVariableCase: lower_case
+  readability-identifier-naming.GlobalConstantCase: lower_case
+  readability-identifier-naming.StaticConstantCase: lower_case
+  readability-identifier-naming.TypeAliasCase: lower_case
+  readability-identifier-naming.TypedefCase: lower_case
+  readability-identifier-naming.TemplateParameterCase: CamelCase
+  readability-identifier-naming.MacroDefinitionCase: UPPER_CASE

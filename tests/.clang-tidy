@@ -1,0 +1,16 @@
+# SPDX-FileCopyrightText: 2026 Thomas Ascher <thomas.ascher@gmx.at>
+#
+# SPDX-License-Identifier: MIT
+#
+# Test code answers to the same rules as the library, minus three that fight
+# with what a test is: the literals are the reference values under test, and
+# Catch2's macros both inflate the measured complexity of a TEST_CASE and pull
+# their includes in indirectly.
+
+InheritParentConfig: true
+
+Checks: >
+  -cppcoreguidelines-avoid-magic-numbers,
+  -readability-magic-numbers,
+  -readability-function-cognitive-complexity,
+  -misc-include-cleaner

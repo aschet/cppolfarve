@@ -1,0 +1,24 @@
+# Boost house style: 4 spaces, no tabs, 80 columns, braces on their own line.
+
+Language: Cpp
+BasedOnStyle: LLVM
+Standard: c++17
+ColumnLimit: 80
+IndentWidth: 4
+ContinuationIndentWidth: 4
+AccessModifierOffset: -4
+UseTab: Never
+BreakBeforeBraces: Allman
+BreakBeforeBinaryOperators: NonAssignment
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: false
+AlwaysBreakTemplateDeclarations: Yes
+SpaceAfterTemplateKeyword: true
+NamespaceIndentation: None
+FixNamespaceComments: true
+DerivePointerAlignment: false
+PointerAlignment: Left
+SortIncludes: CaseSensitive
+IncludeBlocks: Preserve
