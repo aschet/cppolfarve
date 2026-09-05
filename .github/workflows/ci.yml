@@ -31,7 +31,7 @@ jobs:
             os: windows-latest
             generator: ""
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Build, test and install
         env:
@@ -65,7 +65,7 @@ jobs:
     name: Conan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Install Conan
         run: |
           pipx install conan
@@ -83,7 +83,7 @@ jobs:
     name: Static analysis
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Install clang-tidy
         run: |
           pipx install "clang-tidy==21.1.6"
